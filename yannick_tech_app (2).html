@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Yannick Tech - Outils Informatiques</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+:root{--bg-deep:#020818;--bg-card:#060f2a;--bg-card2:#0a1535;--blue-main:#0066ff;--blue-light:#00aaff;--blue-glow:#00ddff;--blue-dark:#003580;--text-main:#e0f0ff;--text-muted:#5a7aaa;--border:rgba(0,150,255,0.2);--gold:#ffd700;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg-deep);color:var(--text-main);font-family:'Exo 2',sans-serif;min-height:100vh;overflow-x:hidden;}
+#particles{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;}
+.pt{position:absolute;border-radius:50%;background:rgba(0,170,255,0.4);animation:rise linear infinite;}
+@keyframes rise{0%{transform:translateY(100vh);opacity:0}10%{opacity:1}90%{opacity:.6}100%{transform:translateY(-5vh);opacity:0}}
+header{position:sticky;top:0;z-index:100;background:rgba(2,8,24,.97);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 20px;}
+.header-inner{max-width:1400px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:68px;gap:10px;}
+.logo{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.logo-icon{width:42px;height:42px;background:linear-gradient(135deg,#003580,#0066ff);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;box-shadow:0 0 20px rgba(0,100,255,.5);}
+.logo-text{font-family:'Orbitron',monospace;font-weight:900;font-size:1.2rem;background:linear-gradient(90deg,#00aaff,#00ffee,#0066ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-size:200% auto;animation:shimmer 3s linear infinite;}
+@keyframes shimmer{0%{background-position:0%}100%{background-position:200%}}
+nav{display:flex;gap:4px;flex-wrap:wrap;}
+nav button{background:none;border:1px solid transparent;color:var(--text-muted);font-family:'Exo 2',sans-serif;font-size:.85rem;padding:7px 13px;cursor:pointer;border-radius:8px;transition:all .3s;}
+nav button:hover,nav button.active{background:rgba(0,100,255,.15);color:var(--blue-light);border-color:var(--border);}
+nav button.active{color:var(--blue-glow);}
+.page{display:none;max-width:1400px;margin:0 auto;padding:25px 15px;position:relative;z-index:1;}
+.page.active{display:block;}
+.hero{text-align:center;padding:50px 15px 30px;}
+.hero h1{font-family:'Orbitron',monospace;font-size:clamp(2rem,5vw,3.5rem);font-weight:900;background:linear-gradient(90deg,#00aaff,#00ffee,#0066ff,#00aaff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-size:300% auto;animation:shimmer 4s linear infinite;line-height:1.1;}
+.hero p{color:var(--text-muted);margin-top:12px;letter-spacing:2px;font-size:.95rem;}
+.hero-div{width:180px;height:2px;background:linear-gradient(90deg,transparent,var(--blue-main),transparent);margin:18px auto;}
+.search-bar{display:flex;gap:8px;max-width:480px;margin:20px auto;}
+.search-bar input{flex:1;background:var(--bg-card2);border:1px solid var(--border);color:var(--text-main);padding:11px 16px;border-radius:10px;font-family:'Exo 2',sans-serif;font-size:.9rem;outline:none;transition:border .3s;}
+.search-bar input:focus{border-color:var(--blue-main);}
+.search-bar button{background:linear-gradient(135deg,var(--blue-dark),var(--blue-main));border:none;color:#fff;padding:11px 16px;border-radius:10px;cursor:pointer;}
+.cats{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:25px;}
+.cat-btn{background:var(--bg-card2);border:1px solid var(--border);color:var(--text-muted);padding:7px 15px;border-radius:20px;cursor:pointer;font-family:'Exo 2',sans-serif;font-size:.82rem;transition:all .3s;}
+.cat-btn:hover,.cat-btn.active{background:rgba(0,100,255,.2);border-color:var(--blue-main);color:var(--blue-light);}
+.products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px;}
+.product-card{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;overflow:hidden;transition:all .3s;position:relative;}
+.product-card:hover{border-color:var(--blue-main);transform:translateY(-4px);box-shadow:0 10px 35px rgba(0,100,255,.2);}
+.product-card .badge{position:absolute;top:10px;right:10px;background:rgba(255,51,102,.9);color:#fff;font-size:.68rem;padding:3px 7px;border-radius:4px;font-weight:700;letter-spacing:1px;}
+.prod-img{height:140px;display:flex;align-items:center;justify-content:center;font-size:3.5rem;background:linear-gradient(135deg,rgba(0,30,80,.8),rgba(0,60,150,.3));}
+.prod-info{padding:14px;}
+.prod-info h3{font-size:.95rem;font-weight:700;margin-bottom:5px;}
+.prod-info .desc{font-size:.78rem;color:var(--text-muted);margin-bottom:10px;line-height:1.5;}
+.prod-footer{display:flex;align-items:center;justify-content:space-between;}
+.price{font-family:'Orbitron',monospace;font-size:1rem;font-weight:700;color:var(--blue-glow);}
+.add-cart{background:linear-gradient(135deg,var(--blue-dark),var(--blue-main));border:none;color:#fff;padding:7px 12px;border-radius:7px;cursor:pointer;font-size:.8rem;transition:all .2s;}
+.add-cart:hover{transform:scale(1.05);}
+.section-title{font-family:'Orbitron',monospace;font-size:1.3rem;color:var(--blue-light);margin-bottom:20px;padding-bottom:10px;border-bottom:1px solid var(--border);}
+.cart-layout{display:grid;grid-template-columns:1fr 360px;gap:20px;}
+@media(max-width:850px){.cart-layout{grid-template-columns:1fr;}}
+.cart-items{display:flex;flex-direction:column;gap:10px;}
+.cart-item{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:14px;display:flex;align-items:center;gap:12px;}
+.ci-icon{font-size:2.2rem;width:55px;text-align:center;flex-shrink:0;}
+.ci-info{flex:1;}
+.ci-info h4{font-size:.9rem;font-weight:700;}
+.ci-info p{font-size:.78rem;color:var(--text-muted);margin-top:2px;}
+.qty-ctrl{display:flex;align-items:center;gap:7px;margin-top:7px;}
+.qty-ctrl button{background:var(--bg-card2);border:1px solid var(--border);color:var(--text-main);width:26px;height:26px;border-radius:5px;cursor:pointer;}
+.qty-ctrl span{font-family:'Orbitron',monospace;font-weight:700;color:var(--blue-light);font-size:.9rem;}
+.ci-price{font-family:'Orbitron',monospace;font-size:.95rem;color:var(--blue-glow);font-weight:700;text-align:right;flex-shrink:0;}
+.del-btn{background:rgba(255,50,80,.12);border:1px solid rgba(255,50,80,.3);color:#ff5060;padding:5px 9px;border-radius:5px;cursor:pointer;font-size:.8rem;margin-top:6px;}
+.summary-box{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:20px;height:fit-content;position:sticky;top:85px;}
+.summary-box h3{font-family:'Orbitron',monospace;font-size:.95rem;color:var(--blue-light);margin-bottom:18px;}
+.s-row{display:flex;justify-content:space-between;margin-bottom:10px;font-size:.88rem;color:var(--text-muted);}
+.s-row.total{color:var(--text-main);font-weight:700;font-size:.95rem;border-top:1px solid var(--border);padding-top:10px;margin-top:10px;}
+.s-row.total span:last-child{font-family:'Orbitron',monospace;color:var(--blue-glow);}
+.client-form{margin:16px 0;}
+.client-form label{font-size:.75rem;color:var(--text-muted);letter-spacing:1px;margin-bottom:5px;display:block;}
+.client-form input{width:100%;background:var(--bg-card2);border:1px solid var(--border);color:var(--text-main);padding:9px 12px;border-radius:7px;font-family:'Exo 2',sans-serif;font-size:.88rem;margin-bottom:8px;outline:none;transition:border .3s;}
+.client-form input:focus{border-color:var(--blue-main);}
+.btn-primary{width:100%;background:linear-gradient(135deg,var(--blue-dark),var(--blue-main));border:none;color:#fff;padding:13px;border-radius:9px;cursor:pointer;font-family:'Exo 2',sans-serif;font-size:.95rem;font-weight:700;letter-spacing:1px;transition:all .3s;margin-top:6px;}
+.btn-primary:hover{box-shadow:0 0 22px rgba(0,100,255,.4);transform:translateY(-2px);}
+.btn-outline{width:100%;background:transparent;border:1px solid var(--blue-main);color:var(--blue-light);padding:11px;border-radius:9px;cursor:pointer;font-family:'Exo 2',sans-serif;font-size:.9rem;transition:all .3s;margin-top:6px;}
+.btn-outline:hover{background:rgba(0,100,255,.1);}
+.invoice-box{background:#fff;color:#111;border-radius:12px;padding:35px;max-width:720px;margin:0 auto;font-family:'Exo 2',sans-serif;}
+.inv-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:25px;padding-bottom:18px;border-bottom:3px solid #0066ff;}
+.inv-logo{font-family:'Orbitron',monospace;font-size:1.6rem;font-weight:900;color:#003580;}
+.inv-logo small{display:block;font-size:.65rem;color:#666;font-family:'Exo 2',sans-serif;font-weight:400;letter-spacing:2px;margin-top:3px;}
+.inv-num{text-align:right;font-size:.85rem;color:#555;}
+.inv-num strong{display:block;font-family:'Orbitron',monospace;font-size:1.1rem;color:#0066ff;}
+.inv-parties{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:22px;}
+.inv-party h4{font-size:.72rem;text-transform:uppercase;letter-spacing:2px;color:#0066ff;margin-bottom:6px;}
+.inv-party p{font-size:.85rem;color:#333;line-height:1.6;}
+table.itbl{width:100%;border-collapse:collapse;margin-bottom:18px;}
+table.itbl th{background:#0066ff;color:#fff;padding:9px 12px;font-size:.82rem;text-align:left;}
+table.itbl td{padding:9px 12px;border-bottom:1px solid #eee;font-size:.85rem;}
+table.itbl tr:nth-child(even) td{background:#f4f8ff;}
+.inv-totals{text-align:right;font-size:.88rem;}
+.itl{margin-bottom:4px;color:#555;}
+.inv-grand{font-family:'Orbitron',monospace;font-size:1.2rem;color:#0066ff;font-weight:700;margin-top:8px;}
+.inv-footer{margin-top:25px;padding-top:12px;border-top:1px solid #eee;text-align:center;font-size:.78rem;color:#999;}
+.share-btns{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:20px;}
+.share-btn{display:flex;align-items:center;gap:8px;padding:11px 20px;border-radius:9px;border:none;cursor:pointer;font-family:'Exo 2',sans-serif;font-size:.88rem;font-weight:700;transition:all .3s;}
+.share-btn:hover{transform:translateY(-2px);}
+.btn-pdf{background:linear-gradient(135deg,#cc0000,#ff3333);color:#fff;}
+.btn-wa{background:linear-gradient(135deg,#128C7E,#25D366);color:#fff;}
+.btn-fb{background:linear-gradient(135deg,#1877F2,#42a5f5);color:#fff;}
+.ai-layout{display:grid;grid-template-columns:1fr 300px;gap:20px;}
+@media(max-width:850px){.ai-layout{grid-template-columns:1fr;}}
+.chat-box{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;display:flex;flex-direction:column;height:520px;}
+.chat-header{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+.ai-av{width:38px;height:38px;background:linear-gradient(135deg,#003580,#0066ff);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;box-shadow:0 0 14px rgba(0,100,255,.4);flex-shrink:0;}
+.ai-dot{width:7px;height:7px;background:#00ff88;border-radius:50%;display:inline-block;margin-right:5px;box-shadow:0 0 5px #00ff88;}
+.chat-msgs{flex:1;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:13px;}
+.chat-msgs::-webkit-scrollbar{width:3px;}
+.chat-msgs::-webkit-scrollbar-thumb{background:var(--blue-dark);border-radius:2px;}
+.msg{max-width:82%;padding:11px 14px;border-radius:11px;font-size:.88rem;line-height:1.6;}
+.msg.bot{background:var(--bg-card2);border:1px solid var(--border);align-self:flex-start;border-bottom-left-radius:3px;}
+.msg.user{background:linear-gradient(135deg,var(--blue-dark),var(--blue-main));align-self:flex-end;border-bottom-right-radius:3px;}
+.typing{display:flex;gap:4px;align-items:center;padding:4px 0;}
+.dot{width:6px;height:6px;background:var(--blue-light);border-radius:50%;animation:bounce 1s infinite;}
+.dot:nth-child(2){animation-delay:.2s;}
+.dot:nth-child(3){animation-delay:.4s;}
+@keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-7px)}}
+.chat-input{padding:13px;border-top:1px solid var(--border);display:flex;gap:8px;}
+.chat-input input{flex:1;background:var(--bg-card2);border:1px solid var(--border);color:var(--text-main);padding:9px 13px;border-radius:7px;font-family:'Exo 2',sans-serif;font-size:.88rem;outline:none;}
+.chat-input input:focus{border-color:var(--blue-main);}
+.chat-input button{background:linear-gradient(135deg,var(--blue-dark),var(--blue-main));border:none;color:#fff;padding:9px 14px;border-radius:7px;cursor:pointer;}
+.quick-btns{display:flex;flex-direction:column;gap:8px;}
+.qb{background:var(--bg-card);border:1px solid var(--border);color:var(--text-muted);padding:11px 14px;border-radius:9px;cursor:pointer;font-family:'Exo 2',sans-serif;font-size:.82rem;text-align:left;transition:all .3s;line-height:1.4;}
+.qb:hover{border-color:var(--blue-main);color:var(--blue-light);background:rgba(0,100,255,.1);}
+.qb strong{display:block;color:var(--text-main);margin-bottom:3px;font-size:.85rem;}
+.toast{position:fixed;bottom:25px;right:25px;background:linear-gradient(135deg,#003580,#0066ff);color:#fff;padding:12px 22px;border-radius:9px;font-size:.88rem;z-index:9999;transform:translateY(100px);opacity:0;transition:all .4s;box-shadow:0 5px 25px rgba(0,100,255,.4);}
+.toast.show{transform:translateY(0);opacity:1;}
+.admin-row{background:var(--bg-card);border:1px solid var(--border);border-radius:10px;padding:13px 16px;display:flex;align-items:center;gap:14px;transition:border .2s;}
+.admin-row:hover{border-color:var(--blue-main);}
+.admin-row .ar-icon{font-size:2rem;width:45px;text-align:center;flex-shrink:0;}
+.admin-row .ar-info{flex:1;}
+.admin-row .ar-info h4{font-size:.9rem;font-weight:700;margin-bottom:2px;}
+.admin-row .ar-info p{font-size:.75rem;color:var(--text-muted);}
+.admin-row .ar-price{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+.admin-row .ar-price label{font-size:.75rem;color:var(--text-muted);white-space:nowrap;}
+.admin-row .ar-price input{background:var(--bg-card2);border:1px solid var(--border);color:var(--blue-glow);font-family:'Orbitron',monospace;font-size:.9rem;font-weight:700;padding:7px 12px;border-radius:7px;width:140px;outline:none;text-align:right;transition:border .3s;}
+.admin-row .ar-price input:focus{border-color:var(--blue-main);}
+.admin-cat-title{font-size:.75rem;color:var(--text-muted);letter-spacing:2px;text-transform:uppercase;margin:16px 0 6px;padding-left:4px;}
+.empty{text-align:center;padding:50px 20px;color:var(--text-muted);}
+.empty .eicon{font-size:3.5rem;margin-bottom:12px;}
+</style>
+</head>
+<body>
+<div id="particles"></div>
+<header>
+  <div class="header-inner">
+    <div class="logo">
+      <div class="logo-icon">⚡</div>
+      <div>
+        <div class="logo-text">YANNICK TECH</div>
+        <div style="font-size:.58rem;color:var(--text-muted);letter-spacing:2px;">OUTILS INFORMATIQUES</div>
+      </div>
+    </div>
+    <nav>
+      <button class="active" onclick="showPage('shop')">🏪 Boutique</button>
+      <button onclick="showPage('cart')">🛒 Panier <span id="cart-badge" style="background:#ff3366;color:#fff;border-radius:10px;padding:1px 6px;font-size:.72rem;margin-left:3px;">0</span></button>
+      <button onclick="showPage('invoices')">🧾 Factures</button>
+      <button onclick="showPage('ai')">🤖 IA</button>
+      <button onclick="showPage('admin')">⚙️ Admin</button>
+    </nav>
+  </div>
+</header>
+
+<!-- SHOP -->
+<div class="page active" id="page-shop">
+  <div class="hero">
+    <h1>⚡ YANNICK TECH</h1>
+    <p>VOTRE PARTENAIRE INFORMATIQUE DE CONFIANCE — COTONOU, BÉNIN</p>
+    <div class="hero-div"></div>
+  </div>
+  <div class="search-bar">
+    <input type="text" id="search-input" placeholder="🔍 Rechercher un produit..." oninput="filterProducts()">
+    <button onclick="filterProducts()">🔍</button>
+  </div>
+  <div class="cats" id="cats"></div>
+  <div class="products-grid" id="products-grid"></div>
+</div>
+
+<!-- CART -->
+<div class="page" id="page-cart">
+  <div class="section-title">🛒 Mon Panier</div>
+  <div class="cart-layout">
+    <div id="cart-list"></div>
+    <div class="summary-box">
+      <h3>📋 Récapitulatif</h3>
+      <div class="s-row"><span>Sous-total</span><span id="sub-total">0 FCFA</span></div>
+      <div class="s-row"><span>TVA (18%)</span><span id="tva-total">0 FCFA</span></div>
+      <div class="s-row total"><span>TOTAL</span><span id="grand-total">0 FCFA</span></div>
+      <div class="client-form">
+        <label>INFORMATIONS CLIENT</label>
+        <input type="text" id="client-name" placeholder="Nom complet">
+        <input type="text" id="client-phone" placeholder="Téléphone">
+        <input type="email" id="client-email" placeholder="Email (optionnel)">
+        <input type="text" id="client-address" placeholder="Adresse">
+      </div>
+      <button class="btn-primary" onclick="generateInvoice()">🧾 Générer la Facture</button>
+      <button class="btn-outline" onclick="clearCart()">🗑️ Vider le panier</button>
+    </div>
+  </div>
+</div>
+
+<!-- INVOICES -->
+<div class="page" id="page-invoices">
+  <div class="section-title">🧾 Gestion des Factures</div>
+  <div id="invoice-display"></div>
+</div>
+
+<!-- AI -->
+<div class="page" id="page-ai">
+  <div class="section-title">🤖 Assistant IA — YannickBot</div>
+  <div class="ai-layout">
+    <div class="chat-box">
+      <div class="chat-header">
+        <div class="ai-av">🤖</div>
+        <div>
+          <div style="font-weight:700;font-size:.9rem;">YannickBot</div>
+          <div style="font-size:.78rem;color:var(--text-muted);"><span class="ai-dot"></span>En ligne — Assistant Yannick Tech</div>
+        </div>
+      </div>
+      <div class="chat-msgs" id="chat-messages">
+        <div class="msg bot">👋 Bonjour ! Je suis <strong>YannickBot</strong>, l'assistant IA de <strong>Yannick Tech</strong>.<br><br>Je peux vous aider à choisir un produit, comparer des modèles, ou répondre à vos questions. Comment puis-je vous aider ?</div>
+      </div>
+      <div class="chat-input">
+        <input type="text" id="chat-input" placeholder="Posez votre question..." onkeydown="if(event.key==='Enter')sendMessage()">
+        <button onclick="sendMessage()">➤</button>
+      </div>
+    </div>
+    <div>
+      <div style="font-size:.78rem;color:var(--text-muted);margin-bottom:10px;letter-spacing:1px;">QUESTIONS RAPIDES</div>
+      <div class="quick-btns">
+        <div class="qb" onclick="askQuick('Quels sont vos meilleurs produits en ce moment ?')"><strong>🏆 Top produits</strong>Voir les meilleures ventes</div>
+        <div class="qb" onclick="askQuick('Quel ordinateur recommandez-vous pour un étudiant avec un budget de 200 000 FCFA ?')"><strong>🎓 Conseil étudiant</strong>PC adapté à votre budget</div>
+        <div class="qb" onclick="askQuick('Comment fonctionne la facturation sur Yannick Tech ?')"><strong>🧾 Facturation</strong>Comment générer une facture</div>
+        <div class="qb" onclick="askQuick('Quels sont vos délais et frais de livraison à Cotonou ?')"><strong>🚚 Livraison</strong>Délais et tarifs</div>
+        <div class="qb" onclick="askQuick('Quelle est votre politique de garantie et de retour ?')"><strong>🛡️ Garantie</strong>Retours et garantie</div>
+        <div class="qb" onclick="askQuick('Proposez-vous des services de réparation informatique ?')"><strong>🔧 Réparation</strong>Services disponibles</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div class="page" id="page-admin">
+  <div class="section-title">⚙️ Administration — Gestion des Prix</div>
+  <div style="max-width:800px;margin:0 auto;">
+    <div style="background:rgba(0,100,255,.08);border:1px solid var(--border);border-radius:12px;padding:16px 20px;margin-bottom:24px;font-size:.88rem;color:var(--text-muted);">
+      🔒 Modifiez les prix directement ci-dessous. Les changements sont appliqués immédiatement dans la boutique.
+    </div>
+    <div id="admin-products-list" style="display:flex;flex-direction:column;gap:10px;"></div>
+    <button class="btn-primary" style="max-width:240px;margin-top:20px;" onclick="saveAdminPrices()">💾 Enregistrer les prix</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const products=[
+  {id:1,name:"Laptop Pro 15",cat:"Ordinateurs",price:450000,emoji:"💻",desc:"Intel i7, 16GB RAM, 512GB SSD, écran Full HD",badge:"POPULAIRE"},
+  {id:2,name:"Laptop Étudiant",cat:"Ordinateurs",price:185000,emoji:"💻",desc:"Intel i5, 8GB RAM, 256GB SSD, léger et performant",badge:null},
+  {id:3,name:"MacBook Air M2",cat:"Ordinateurs",price:750000,emoji:"💻",desc:"Apple M2, 8GB RAM, 256GB SSD, ultra-fin",badge:"PREMIUM"},
+  {id:4,name:"PC Bureau Gaming",cat:"Ordinateurs",price:520000,emoji:"🖥️",desc:"Intel i9, 32GB RAM, 1TB SSD, RTX 3060",badge:"GAMING"},
+  {id:5,name:"Imprimante Laser",cat:"Imprimantes",price:95000,emoji:"🖨️",desc:"HP LaserJet Pro, 30ppm, recto/verso auto",badge:null},
+  {id:6,name:"Imprimante Jet d'encre",cat:"Imprimantes",price:45000,emoji:"🖨️",desc:"Epson EcoTank, sans cartouche, wifi intégré",badge:"ÉCO"},
+  {id:7,name:"Switch 8 ports",cat:"Réseau",price:25000,emoji:"🔌",desc:"Gigabit Ethernet, plug-and-play, 8 ports RJ45",badge:null},
+  {id:8,name:"Routeur Wifi 6",cat:"Réseau",price:65000,emoji:"📡",desc:"AX1800, double bande, couverture 150m²",badge:"NOUVEAU"},
+  {id:9,name:"Disque SSD 1TB",cat:"Stockage",price:55000,emoji:"💾",desc:"Samsung 870 EVO, 560Mo/s en lecture",badge:null},
+  {id:10,name:"Clé USB 64GB",cat:"Stockage",price:8500,emoji:"🔑",desc:"USB 3.0, 100Mo/s, format compact",badge:null},
+  {id:11,name:"Écran 24 pouces",cat:"Écrans",price:120000,emoji:"🖥️",desc:"Full HD IPS, 75Hz, HDMI + VGA, sans bords",badge:null},
+  {id:12,name:"Écran 4K 27\"",cat:"Écrans",price:280000,emoji:"🖥️",desc:"UHD 4K, 60Hz, USB-C, dalle IPS",badge:"PRO"},
+  {id:13,name:"Clavier + Souris",cat:"Périphériques",price:22000,emoji:"⌨️",desc:"Combo sans fil, ergonomique, autonomie 12 mois",badge:null},
+  {id:14,name:"Webcam HD 1080p",cat:"Périphériques",price:35000,emoji:"📷",desc:"1080p, micro intégré, auto-focus, plug-and-play",badge:null},
+  {id:15,name:"Onduleur 1000VA",cat:"Énergie",price:75000,emoji:"🔋",desc:"Protection coupure courant, autonomie 30 min",badge:null},
+  {id:16,name:"Kit Câbles & Adapt.",cat:"Accessoires",price:5000,emoji:"🔌",desc:"HDMI, USB-C, VGA — kit complet 10 pièces",badge:null},
+];
+
+let cart=[],invoices=[],currentCat="Tous",invoiceCount=1;
+
+// Particles
+(()=>{const c=document.getElementById('particles');for(let i=0;i<28;i++){const p=document.createElement('div');p.className='pt';p.style.cssText=`left:${Math.random()*100}vw;width:${Math.random()*3+1}px;height:${Math.random()*3+1}px;animation-duration:${Math.random()*12+8}s;animation-delay:${Math.random()*12}s`;c.appendChild(p);}})();
+
+function showPage(p){
+  document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(x=>x.classList.remove('active'));
+  document.getElementById('page-'+p).classList.add('active');
+  ['shop','cart','invoices','ai','admin'].forEach((n,i)=>{if(n===p)document.querySelectorAll('nav button')[i].classList.add('active');});
+  if(p==='cart')renderCart();
+  if(p==='invoices')renderInvoicePage();
+  if(p==='admin')renderAdminPage();
+}
+
+function renderCats(){
+  const cats=['Tous',...new Set(products.map(p=>p.cat))];
+  document.getElementById('cats').innerHTML=cats.map(c=>`<button class="cat-btn${c===currentCat?' active':''}" onclick="setCat('${c}')">${c}</button>`).join('');
+}
+function setCat(c){currentCat=c;renderCats();filterProducts();}
+
+function filterProducts(){
+  const q=document.getElementById('search-input').value.toLowerCase();
+  let list=currentCat==='Tous'?products:products.filter(p=>p.cat===currentCat);
+  if(q)list=list.filter(p=>p.name.toLowerCase().includes(q)||p.desc.toLowerCase().includes(q));
+  const g=document.getElementById('products-grid');
+  if(!list.length){g.innerHTML='<div class="empty"><div class="eicon">🔍</div><p>Aucun produit trouvé</p></div>';return;}
+  g.innerHTML=list.map(p=>`
+    <div class="product-card">
+      ${p.badge?`<div class="badge">${p.badge}</div>`:''}
+      <div class="prod-img">${p.emoji}</div>
+      <div class="prod-info">
+        <h3>${p.name}</h3>
+        <p class="desc">${p.desc}</p>
+        <div class="prod-footer">
+          <span class="price">${p.price.toLocaleString()} F</span>
+          <button class="add-cart" onclick="addToCart(${p.id})">+ Ajouter</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function addToCart(id){
+  const p=products.find(x=>x.id===id);
+  const ex=cart.find(x=>x.id===id);
+  if(ex)ex.qty++;else cart.push({...p,qty:1});
+  updateBadge();
+  showToast(`✅ ${p.name} ajouté au panier`);
+}
+
+function updateBadge(){
+  document.getElementById('cart-badge').textContent=cart.reduce((s,x)=>s+x.qty,0);
+}
+
+function renderCart(){
+  const el=document.getElementById('cart-list');
+  if(!cart.length){el.innerHTML='<div class="empty"><div class="eicon">🛒</div><p>Panier vide — ajoutez des produits depuis la boutique.</p></div>';['sub-total','tva-total','grand-total'].forEach(id=>document.getElementById(id).textContent='0 FCFA');return;}
+  el.innerHTML=cart.map(item=>`
+    <div class="cart-item">
+      <div class="ci-icon">${item.emoji}</div>
+      <div class="ci-info">
+        <h4>${item.name}</h4>
+        <p>${item.price.toLocaleString()} FCFA / unité</p>
+        <div class="qty-ctrl">
+          <button onclick="chgQty(${item.id},-1)">−</button>
+          <span>${item.qty}</span>
+          <button onclick="chgQty(${item.id},1)">+</button>
+          <button class="del-btn" onclick="rmCart(${item.id})">🗑️</button>
+        </div>
+      </div>
+      <div class="ci-price">${(item.price*item.qty).toLocaleString()} F</div>
+    </div>`).join('');
+  const sub=cart.reduce((s,x)=>s+(x.price*x.qty),0);
+  const tva=Math.round(sub*.18);
+  document.getElementById('sub-total').textContent=sub.toLocaleString()+' FCFA';
+  document.getElementById('tva-total').textContent=tva.toLocaleString()+' FCFA';
+  document.getElementById('grand-total').textContent=(sub+tva).toLocaleString()+' FCFA';
+}
+
+function chgQty(id,d){
+  const item=cart.find(x=>x.id===id);
+  if(!item)return;
+  item.qty+=d;
+  if(item.qty<=0)cart=cart.filter(x=>x.id!==id);
+  updateBadge();renderCart();
+}
+function rmCart(id){cart=cart.filter(x=>x.id!==id);updateBadge();renderCart();}
+function clearCart(){cart=[];updateBadge();renderCart();}
+
+function generateInvoice(){
+  if(!cart.length){showToast('⚠️ Le panier est vide !');return;}
+  const name=document.getElementById('client-name').value||'Client';
+  const phone=document.getElementById('client-phone').value||'-';
+  const email=document.getElementById('client-email').value||'-';
+  const address=document.getElementById('client-address').value||'Cotonou, Bénin';
+  const sub=cart.reduce((s,x)=>s+(x.price*x.qty),0);
+  const tva=Math.round(sub*.18);
+  const total=sub+tva;
+  const date=new Date().toLocaleDateString('fr-FR');
+  const num=`YT-${new Date().getFullYear()}-${String(invoiceCount++).padStart(4,'0')}`;
+  invoices.unshift({num,date,name,phone,email,address,items:[...cart],sub,tva,total});
+  showPage('invoices');
+  showToast('✅ Facture générée !');
+}
+
+function renderInvoicePage(){
+  const el=document.getElementById('invoice-display');
+  if(!invoices.length){el.innerHTML='<div class="empty"><div class="eicon">🧾</div><p>Aucune facture. Finalisez une commande dans le panier.</p></div>';return;}
+  const inv=invoices[0];
+  el.innerHTML=`
+    <div class="share-btns">
+      <button class="share-btn btn-pdf" onclick="downloadPDF()">📄 Télécharger PDF</button>
+      <button class="share-btn btn-wa" onclick="shareWA()">💬 WhatsApp</button>
+      <button class="share-btn btn-fb" onclick="shareFB()">📘 Facebook</button>
+    </div>
+    <div class="invoice-box" id="invoice-content">
+      <div class="inv-header">
+        <div>
+          <div class="inv-logo">⚡ YANNICK TECH<small>Outils Informatiques • Cotonou, Bénin</small></div>
+          <div style="font-size:.82rem;color:#666;margin-top:6px;">📞 +229 00 00 00 00 | contact@yannicktech.bj</div>
+        </div>
+        <div class="inv-num">
+          <div style="font-size:.75rem;color:#999;text-transform:uppercase;letter-spacing:1px;">Facture N°</div>
+          <strong>${inv.num}</strong>
+          <div style="margin-top:6px;font-size:.82rem;color:#666;">Date : ${inv.date}</div>
+        </div>
+      </div>
+      <div class="inv-parties">
+        <div class="inv-party"><h4>Vendeur</h4><p><strong>Yannick Tech SARL</strong><br>Cotonou, Bénin<br>contact@yannicktech.bj<br>+229 00 00 00 00</p></div>
+        <div class="inv-party"><h4>Client</h4><p><strong>${inv.name}</strong><br>${inv.address}<br>${inv.phone}<br>${inv.email}</p></div>
+      </div>
+      <table class="itbl">
+        <thead><tr><th>Produit</th><th>Qté</th><th>Prix Unit.</th><th>Total</th></tr></thead>
+        <tbody>${inv.items.map(i=>`<tr><td>${i.emoji} ${i.name}</td><td>${i.qty}</td><td>${i.price.toLocaleString()} FCFA</td><td>${(i.price*i.qty).toLocaleString()} FCFA</td></tr>`).join('')}</tbody>
+      </table>
+      <div class="inv-totals">
+        <div class="itl">Sous-total : <strong>${inv.sub.toLocaleString()} FCFA</strong></div>
+        <div class="itl">TVA (18%) : <strong>${inv.tva.toLocaleString()} FCFA</strong></div>
+        <div class="inv-grand">TOTAL TTC : ${inv.total.toLocaleString()} FCFA</div>
+      </div>
+      <div class="inv-footer">⚡ Merci pour votre confiance — Yannick Tech © ${new Date().getFullYear()} | Cotonou, Bénin</div>
+    </div>`;
+}
+
+function downloadPDF(){
+  if(!invoices.length)return;
+  const {jsPDF}=window.jspdf;
+  const doc=new jsPDF();
+  const inv=invoices[0];
+  doc.setFillColor(0,53,128);doc.rect(0,0,210,32,'F');
+  doc.setTextColor(255,255,255);doc.setFontSize(20);doc.setFont('helvetica','bold');
+  doc.text('YANNICK TECH',14,16);
+  doc.setFontSize(8);doc.setFont('helvetica','normal');
+  doc.text('Outils Informatiques | Cotonou, Benin | +229 00 00 00 00',14,24);
+  doc.setTextColor(0,102,255);doc.setFontSize(13);doc.setFont('helvetica','bold');
+  doc.text('FACTURE N° '+inv.num,210-14,14,{align:'right'});
+  doc.setFontSize(9);doc.setTextColor(100,100,100);doc.setFont('helvetica','normal');
+  doc.text('Date: '+inv.date,210-14,22,{align:'right'});
+  doc.setDrawColor(0,102,255);doc.setLineWidth(.5);doc.line(14,40,196,40);
+  doc.setTextColor(0,102,255);doc.setFontSize(9);doc.setFont('helvetica','bold');
+  doc.text('CLIENT:',14,48);
+  doc.setFont('helvetica','bold');doc.setTextColor(0,0,0);doc.setFontSize(10);
+  doc.text(inv.name,14,55);
+  doc.setFont('helvetica','normal');doc.setFontSize(8.5);doc.setTextColor(80,80,80);
+  doc.text(inv.phone+' | '+inv.address,14,61);
+  let y=75;
+  doc.setFillColor(0,53,128);doc.rect(14,y-6,182,9,'F');
+  doc.setTextColor(255,255,255);doc.setFontSize(8.5);
+  doc.text('PRODUIT',16,y);doc.text('QTE',108,y);doc.text('PRIX UNIT.',128,y);doc.text('TOTAL',165,y);
+  y+=7;
+  doc.setTextColor(0,0,0);
+  inv.items.forEach((item,i)=>{
+    if(i%2===0){doc.setFillColor(240,246,255);doc.rect(14,y-4,182,7,'F');}
+    doc.setFontSize(8.5);
+    doc.text(item.name.substring(0,35),16,y);
+    doc.text(String(item.qty),112,y);
+    doc.text(item.price.toLocaleString()+' F',128,y);
+    doc.text((item.price*item.qty).toLocaleString()+' F',163,y);
+    y+=8;
+  });
+  y+=5;
+  doc.setFontSize(8.5);doc.setTextColor(80,80,80);
+  doc.text('Sous-total: '+inv.sub.toLocaleString()+' FCFA',130,y);y+=6;
+  doc.text('TVA (18%): '+inv.tva.toLocaleString()+' FCFA',130,y);y+=8;
+  doc.setFillColor(0,53,128);doc.rect(128,y-6,68,11,'F');
+  doc.setTextColor(255,255,255);doc.setFontSize(10);doc.setFont('helvetica','bold');
+  doc.text('TOTAL: '+inv.total.toLocaleString()+' FCFA',130,y+1);
+  doc.setTextColor(160,160,160);doc.setFontSize(7.5);doc.setFont('helvetica','normal');
+  doc.text('Merci pour votre confiance — Yannick Tech (c) '+new Date().getFullYear(),105,285,{align:'center'});
+  doc.save('Facture_'+inv.num+'.pdf');
+  showToast('📄 PDF téléchargé !');
+}
+
+function shareWA(){
+  if(!invoices.length)return;
+  const inv=invoices[0];
+  const msg=encodeURIComponent(`🧾 *FACTURE YANNICK TECH*\n\nN° : ${inv.num}\nDate : ${inv.date}\nClient : ${inv.name}\n\n📦 *Produits :*\n${inv.items.map(i=>`• ${i.name} x${i.qty} = ${(i.price*i.qty).toLocaleString()} FCFA`).join('\n')}\n\n💰 Sous-total : ${inv.sub.toLocaleString()} FCFA\n📊 TVA : ${inv.tva.toLocaleString()} FCFA\n✅ *TOTAL TTC : ${inv.total.toLocaleString()} FCFA*\n\n⚡ Yannick Tech | Cotonou, Bénin`);
+  window.open('https://wa.me/?text='+msg,'_blank');
+}
+
+function shareFB(){
+  if(!invoices.length)return;
+  window.open('https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(window.location.href),'_blank');
+  showToast('📘 Ouverture Facebook...');
+}
+
+// AI CHAT
+const SYS=`Tu es YannickBot, l'assistant IA officiel de Yannick Tech, boutique informatique à Cotonou, Bénin. Tu aides les clients à : choisir des produits, comparer des modèles, comprendre les prix en FCFA, services de garantie et réparation, livraison. Réponds en français, de façon professionnelle et chaleureuse. Sois concis. Produits : laptops (185 000–750 000 FCFA), imprimantes, réseau, stockage, écrans, périphériques, onduleurs.`;
+let chatHist=[];
+
+async function sendMessage(){
+  const inp=document.getElementById('chat-input');
+  const msg=inp.value.trim();
+  if(!msg)return;
+  inp.value='';
+  addMsg(msg,'user');
+  chatHist.push({role:'user',content:msg});
+  const lid=addMsg('<div class="typing"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>','bot');
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:SYS,messages:chatHist})});
+    const data=await res.json();
+    const reply=data.content?.[0]?.text||"Je n'ai pas pu répondre. Réessayez.";
+    chatHist.push({role:'assistant',content:reply});
+    document.getElementById(lid).outerHTML=`<div class="msg bot">${reply.replace(/\n/g,'<br>').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')}</div>`;
+  }catch(e){
+    // Fallback : réponse locale intelligente sans connexion
+    const reply=repondreLocalement(msg);
+    chatHist.push({role:'assistant',content:reply});
+    document.getElementById(lid).outerHTML=`<div class="msg bot">${reply.replace(/\n/g,'<br>').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')}</div>`;
+  }
+  scrl();
+}
+
+function repondreLocalement(msg){
+  const m=msg.toLowerCase();
+  if(m.includes('laptop')||m.includes('ordinateur')||m.includes('pc')||m.includes('macbook')){
+    if(m.includes('étudiant')||m.includes('budget')||m.includes('200 000')||m.includes('pas cher'))
+      return "Pour un étudiant, je recommande notre **Laptop Étudiant** à **185 000 FCFA** (Intel i5, 8GB RAM, 256GB SSD). Léger et parfait pour les cours et travaux !";
+    if(m.includes('gaming')||m.includes('jeu'))
+      return "Pour le gaming, notre **PC Bureau Gaming** à **520 000 FCFA** est idéal : Intel i9, 32GB RAM, RTX 3060. Une vraie bête de course ! 🎮";
+    return "Nous proposons plusieurs ordinateurs :\n\n• **Laptop Étudiant** — 185 000 FCFA (i5, 8GB)\n• **Laptop Pro 15** — 450 000 FCFA (i7, 16GB)\n• **MacBook Air M2** — 750 000 FCFA\n• **PC Bureau Gaming** — 520 000 FCFA\n\nQuel est votre budget et usage prévu ?";
+  }
+  if(m.includes('imprimante')||m.includes('impression')){
+    return "Nous avons deux imprimantes :\n\n• **Imprimante Laser HP** — 95 000 FCFA (30ppm, recto/verso)\n• **Imprimante Jet d'encre Epson EcoTank** — 45 000 FCFA (sans cartouche, wifi)\n\nPour un usage bureautique intensif, la laser est recommandée. Pour un usage maison, l'EcoTank est économique.";
+  }
+  if(m.includes('réseau')||m.includes('wifi')||m.includes('routeur')||m.includes('switch')){
+    return "Nos équipements réseau :\n\n• **Switch 8 ports Gigabit** — 25 000 FCFA\n• **Routeur Wifi 6 AX1800** — 65 000 FCFA (couverture 150m²)\n\nPour une petite entreprise, le combo Switch + Routeur Wifi 6 est une excellente solution !";
+  }
+  if(m.includes('stockage')||m.includes('ssd')||m.includes('disque')||m.includes('clé usb')){
+    return "Nos solutions de stockage :\n\n• **Disque SSD 1TB Samsung** — 55 000 FCFA (560Mo/s)\n• **Clé USB 64GB** — 8 500 FCFA (USB 3.0)\n\nLe SSD Samsung est très fiable pour sauvegarder vos données ou booster un PC !";
+  }
+  if(m.includes('écran')||m.includes('moniteur')){
+    return "Nos écrans disponibles :\n\n• **Écran 24\" Full HD** — 75 000 FCFA\n• **Écran 27\" 4K** — 145 000 FCFA\n• **Écran Courbe 32\"** — 185 000 FCFA\n\nPour la bureautique, le 24\" est parfait. Pour le graphisme ou gaming, le 27\" 4K est conseillé.";
+  }
+  if(m.includes('onduleur')||m.includes('ups')||m.includes('courant')||m.includes('électricité')){
+    return "Face aux coupures de courant fréquentes au Bénin, nos onduleurs sont indispensables :\n\n• **Onduleur 650VA** — 35 000 FCFA\n• **Onduleur 1500VA Pro** — 85 000 FCFA\n\nProtégez votre matériel et continuez à travailler pendant les délestages !";
+  }
+  if(m.includes('facture')||m.includes('facturation')||m.includes('reçu')){
+    return "Pour générer une facture sur Yannick Tech :\n\n1. Ajoutez vos produits au **panier** 🛒\n2. Remplissez vos **informations client**\n3. Cliquez sur **Générer la Facture**\n\nVous pourrez ensuite télécharger le PDF, partager par WhatsApp ou Facebook. Simple et rapide !";
+  }
+  if(m.includes('livraison')||m.includes('délai')||m.includes('livrer')){
+    return "📦 **Livraison Yannick Tech :**\n\n• **Cotonou & environs** : 24-48h ouvrables\n• **Autres villes du Bénin** : 3-5 jours\n• Livraison gratuite pour toute commande supérieure à 100 000 FCFA\n\nNous vous contactons dès que votre commande est prête !";
+  }
+  if(m.includes('garantie')||m.includes('retour')||m.includes('remboursement')){
+    return "🛡️ **Politique de garantie Yannick Tech :**\n\n• **Garantie constructeur** : 1 à 2 ans selon le produit\n• **Retour** : 7 jours pour tout défaut constaté\n• **SAV** : Prise en charge rapide des réparations sous garantie\n\nVotre satisfaction est notre priorité !";
+  }
+  if(m.includes('réparation')||m.includes('panne')||m.includes('service')){
+    return "🔧 **Services de réparation Yannick Tech :**\n\n• Diagnostic gratuit\n• Réparation laptops & PC fixes\n• Remplacement d'écrans, batteries, claviers\n• Formatage & réinstallation Windows/Linux\n• Récupération de données\n\nApportez votre appareil en boutique à Cotonou !";
+  }
+  if(m.includes('prix')||m.includes('combien')||m.includes('tarif')||m.includes('coût')){
+    return "Nos gammes de prix :\n\n💻 **Ordinateurs** : 185 000 — 750 000 FCFA\n🖨️ **Imprimantes** : 45 000 — 95 000 FCFA\n🖥️ **Écrans** : 75 000 — 185 000 FCFA\n📡 **Réseau** : 25 000 — 65 000 FCFA\n💾 **Stockage** : 8 500 — 55 000 FCFA\n⚡ **Onduleurs** : 35 000 — 85 000 FCFA\n\nQuel produit vous intéresse ?";
+  }
+  if(m.includes('bonjour')||m.includes('salut')||m.includes('bonsoir')||m.includes('hello')){
+    return "👋 Bonjour ! Bienvenue chez **Yannick Tech**, votre partenaire informatique à Cotonou 🇧🇯\n\nJe suis YannickBot et je suis là pour vous aider à :\n• Choisir le bon produit\n• Comparer les modèles\n• Répondre à vos questions\n\nComment puis-je vous aider ?";
+  }
+  if(m.includes('merci')){
+    return "😊 Avec plaisir ! N'hésitez pas si vous avez d'autres questions. Yannick Tech est là pour vous servir ! ⚡";
+  }
+  if(m.includes('meilleur')||m.includes('top')||m.includes('populaire')||m.includes('recommand')){
+    return "🏆 **Nos best-sellers du moment :**\n\n1. 💻 **Laptop Pro 15** — 450 000 FCFA *(i7, 16GB, très populaire)*\n2. 📡 **Routeur Wifi 6** — 65 000 FCFA *(nouveau, très demandé)*\n3. 💻 **Laptop Étudiant** — 185 000 FCFA *(parfait rapport qualité/prix)*\n4. 💾 **SSD 1TB Samsung** — 55 000 FCFA *(incontournable)*\n\nVous souhaitez en savoir plus sur l'un d'eux ?";
+  }
+  return "Merci pour votre message ! 😊 Je peux vous renseigner sur nos **produits**, **prix**, **livraison**, **garantie** et **services de réparation**.\n\nUtilisez les boutons de questions rapides à droite, ou posez-moi votre question directement ! ⚡ Yannick Tech est là pour vous.";
+}
+
+function addMsg(text,cls){
+  const id='m'+Date.now()+Math.random().toString(36).slice(2);
+  const el=document.createElement('div');
+  el.className='msg '+cls;el.id=id;el.innerHTML=text;
+  document.getElementById('chat-messages').appendChild(el);
+  scrl();return id;
+}
+function scrl(){const c=document.getElementById('chat-messages');c.scrollTop=c.scrollHeight;}
+function askQuick(q){document.getElementById('chat-input').value=q;showPage('ai');sendMessage();}
+
+function showToast(msg){
+  const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+function renderAdminPage(){
+  const el=document.getElementById('admin-products-list');
+  const cats=[...new Set(products.map(p=>p.cat))];
+  let html='';
+  cats.forEach(cat=>{
+    const catProducts=products.filter(p=>p.cat===cat);
+    html+=`<div class="admin-cat-title">📂 ${cat}</div>`;
+    catProducts.forEach(p=>{
+      html+=`
+      <div class="admin-row">
+        <div class="ar-icon">${p.emoji}</div>
+        <div class="ar-info">
+          <h4>${p.name}</h4>
+          <p>${p.desc}</p>
+        </div>
+        <div class="ar-price">
+          <label>PRIX (FCFA)</label>
+          <input type="number" id="price-${p.id}" value="${p.price}" min="0" step="500" oninput="previewPrice(${p.id},this.value)">
+        </div>
+      </div>`;
+    });
+  });
+  el.innerHTML=html;
+}
+
+function previewPrice(id,val){
+  const p=products.find(x=>x.id===id);
+  if(p&&val>0)p.price=parseInt(val)||p.price;
+}
+
+function saveAdminPrices(){
+  let hasError=false;
+  products.forEach(p=>{
+    const inp=document.getElementById('price-'+p.id);
+    if(inp){
+      const v=parseInt(inp.value);
+      if(v>0){p.price=v;}
+      else{inp.style.borderColor='#ff5060';hasError=true;}
+    }
+  });
+  if(hasError){showToast('⚠️ Vérifiez les prix invalides !');return;}
+  filterProducts();
+  showToast('✅ Prix mis à jour avec succès !');
+  // Flash vert sur les inputs
+  document.querySelectorAll('#admin-products-list input').forEach(inp=>{
+    inp.style.borderColor='#00ff88';
+    setTimeout(()=>inp.style.borderColor='',1500);
+  });
+}
+
+// INIT
+renderCats();filterProducts();
+</script>
+</body>
+</html>
